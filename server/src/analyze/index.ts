@@ -1,11 +1,8 @@
-import { config, isLlmConfigured } from '../config.js';
 import type { AnalysisReport, ExtractionWarning, SourceMeta } from '../domain/types.js';
 import { AppError } from '../http/errors.js';
 import { ingestExcel } from '../ingest/excel.js';
 import { ingestPdf } from '../ingest/pdf.js';
 import type { SourceDocument } from '../ingest/types.js';
-import { assistExtraction } from '../llm/extractAssist.js';
-import { writeNarrative } from '../llm/narrative.js';
 import { parseBalanceSheet } from '../parse/balanceSheet.js';
 import { finaliseStatement } from './derive.js';
 import { buildSummary, generateInsights } from './insights.js';
@@ -28,8 +25,6 @@ export interface AnalyseInput {
   buffer: Buffer;
   fileName: string;
   format: UploadFormat;
-  /** Set false to force the deterministic path even when a key is present. */
-  useLlm?: boolean;
 }
 
 /** Minimum characters of recovered text before we call a PDF image-only. */
@@ -54,44 +49,14 @@ export async function analyseDocument(input: AnalyseInput): Promise<AnalysisRepo
   const parsed = parseBalanceSheet(document);
   const warnings: ExtractionWarning[] = [...parsed.warnings];
 
-  const llmAvailable = isLlmConfigured() && input.useLlm !== false;
-  let extractionAssisted = false;
-
-  // Only spend a model call when the deterministic pass left something on the
-  // table: low confidence, or rows carrying figures that nothing matched.
-  const needsAssist =
-    parsed.confidence < config.llmAssistThreshold || parsed.unmappedRows.length > 0;
-
-  let lineItems = parsed.statement.lineItems;
-  if (llmAvailable && needsAssist) {
-    const assisted = await assistExtraction(parsed);
-    if (assisted.applied > 0) {
-      lineItems = assisted.lineItems;
-      extractionAssisted = true;
-      warnings.push({
-        code: 'LLM_ASSISTED_MAPPING',
-        severity: 'info',
-        message: `${assisted.applied} line item${assisted.applied === 1 ? '' : 's'} were matched with Claude's help and are marked accordingly.`,
-      });
-    }
-  }
+  const lineItems = parsed.statement.lineItems;
 
   const statement = finaliseStatement({ ...parsed.statement, lineItems });
   const metrics = computeMetrics(statement);
   const ruleInsights = generateInsights(statement, metrics);
 
-  let insights = ruleInsights;
-  let summary = buildSummary(statement, metrics, ruleInsights);
-  let narrativeFromLlm = false;
-
-  if (llmAvailable) {
-    const narrative = await writeNarrative(statement, metrics, ruleInsights);
-    if (narrative && narrative.insights.length > 0) {
-      summary = narrative.summary;
-      insights = narrative.insights;
-      narrativeFromLlm = true;
-    }
-  }
+  const insights = ruleInsights;
+  const summary = buildSummary(statement, metrics, ruleInsights);
 
   for (const check of statement.balanceChecks) {
     if (check.status === 'imbalanced' || check.status === 'minor-variance') {
@@ -114,17 +79,12 @@ export async function analyseDocument(input: AnalyseInput): Promise<AnalysisRepo
     pageCount: input.format === 'pdf' ? document.pages.length : undefined,
     sheetNames: document.sheetNames,
     durationMs: Date.now() - startedAt,
-    llmAssist: {
-      extraction: extractionAssisted,
-      narrative: narrativeFromLlm,
-      model: extractionAssisted || narrativeFromLlm ? config.anthropic.model : undefined,
-    },
   };
 
   return {
     source,
     statement,
-    analysis: { metrics, insights, summary, narrativeFromLlm },
+    analysis: { metrics, insights, summary },
     warnings,
     extractionConfidence,
   };

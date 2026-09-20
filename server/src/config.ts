@@ -52,12 +52,4 @@ function resolveUploadLimitMb(): number {
 export const config = {
   port: resolvePort(5174),
   maxUploadBytes: resolveUploadLimitMb() * 1024 * 1024,
-  anthropic: {
-    apiKey: process.env.ANTHROPIC_API_KEY?.trim() || null,
-    model: process.env.ANTHROPIC_MODEL?.trim() || 'claude-sonnet-5',
-  },
-  /** Below this, the pipeline asks Claude to look at the rows it could not map. */
-  llmAssistThreshold: 0.6,
 } as const;
-
-export const isLlmConfigured = (): boolean => config.anthropic.apiKey !== null;

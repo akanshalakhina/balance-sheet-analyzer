@@ -1,6 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { analyseDocument } from '../analyze/index.js';
-import { config, isLlmConfigured } from '../config.js';
+import { config } from '../config.js';
 import { AppError } from './errors.js';
 import { detectFormat, upload } from './upload.js';
 
@@ -18,8 +18,6 @@ export const router: Router = Router();
 router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    llmConfigured: isLlmConfigured(),
-    model: isLlmConfigured() ? config.anthropic.model : null,
     maxUploadBytes: config.maxUploadBytes,
   });
 });
@@ -37,14 +35,11 @@ router.post(
     }
 
     const format = detectFormat(file.buffer, file.originalname);
-    // Opt-out flag from the UI toggle; anything but "false" leaves it enabled.
-    const useLlm = req.body?.useLlm !== 'false';
 
     const report = await analyseDocument({
       buffer: file.buffer,
       fileName: file.originalname,
       format,
-      useLlm,
     });
 
     res.json(report);

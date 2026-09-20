@@ -6,7 +6,6 @@ import {
   FileText,
   Info,
   Scale,
-  Sparkles,
 } from 'lucide-react';
 import type { AnalysisReport, BalanceCheck } from '../types';
 import { formatDuration, formatExact, formatFileSize } from '../lib/format';
@@ -120,15 +119,7 @@ export function ReportHeader({ report }: Props) {
           Analysed in {formatDuration(source.durationMs)}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5" aria-hidden />
-          {source.llmAssist.narrative || source.llmAssist.extraction
-            ? `AI assist: ${[
-                source.llmAssist.extraction ? 'row mapping' : null,
-                source.llmAssist.narrative ? 'written analysis' : null,
-              ]
-                .filter(Boolean)
-                .join(' + ')} (${source.llmAssist.model})`
-            : 'Automated analysis pipeline'}
+          Automated analysis pipeline
         </span>
       </div>
 

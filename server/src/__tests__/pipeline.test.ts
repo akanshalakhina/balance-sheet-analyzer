@@ -51,7 +51,6 @@ const analyse = () =>
     buffer: fs.readFileSync(SAMPLE),
     fileName: 'laj-exports-fy2024.pdf',
     format: 'pdf',
-    useLlm: false, // deterministic path only, so the suite needs no API key
   });
 
 describe('PDF pipeline', () => {
@@ -94,8 +93,6 @@ describe('PDF pipeline', () => {
     const report = await analyse();
     expect(report.analysis.metrics.length).toBeGreaterThan(6);
     expect(report.analysis.insights.length).toBeGreaterThan(4);
-    expect(report.analysis.narrativeFromLlm).toBe(false);
-    expect(report.source.llmAssist.extraction).toBe(false);
   });
 
   it('records provenance for every extracted figure', async () => {
@@ -148,7 +145,6 @@ describe('Excel pipeline', () => {
       buffer: workbook(),
       fileName: 'balance-sheet.xlsx',
       format: 'excel',
-      useLlm: false,
     });
 
     expect(report.source.sheetNames).toEqual(['Balance Sheet']);
@@ -164,7 +160,6 @@ describe('Excel pipeline', () => {
       buffer: workbook(),
       fileName: 'balance-sheet.xlsx',
       format: 'excel',
-      useLlm: false,
     });
     const check = report.statement.balanceChecks.find((c) => c.periodId === 'FY2024')!;
     expect(check.status).toBe('balanced');
@@ -213,7 +208,6 @@ describe('Excel pipeline', () => {
       buffer: bareNumberWorkbook(),
       fileName: 'acme.xlsx',
       format: 'excel',
-      useLlm: false,
     });
 
   it('reads unseparated four-digit figures out of numeric cells', async () => {
@@ -249,7 +243,7 @@ describe('failure handling', () => {
     // A valid PDF header with nothing extractable behind it.
     const empty = Buffer.from('%PDF-1.4\n%%EOF\n', 'latin1');
     await expect(
-      analyseDocument({ buffer: empty, fileName: 'scan.pdf', format: 'pdf', useLlm: false }),
+      analyseDocument({ buffer: empty, fileName: 'scan.pdf', format: 'pdf' }),
     ).rejects.toMatchObject({ code: expect.stringMatching(/NO_TEXT_LAYER|UNREADABLE_PDF/) });
   });
 
@@ -259,7 +253,6 @@ describe('failure handling', () => {
         buffer: Buffer.from('this is not a workbook'),
         fileName: 'notes.xlsx',
         format: 'excel',
-        useLlm: false,
       }),
     ).rejects.toThrow();
   });

@@ -18,8 +18,6 @@ interface ErrorBody {
 
 export interface HealthResponse {
   status: string;
-  llmConfigured: boolean;
-  model: string | null;
   maxUploadBytes: number;
 }
 
@@ -31,11 +29,10 @@ export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse>
 
 export async function analyzeFile(
   file: File,
-  options: { useLlm: boolean; signal?: AbortSignal },
+  options: { signal?: AbortSignal },
 ): Promise<AnalysisReport> {
   const form = new FormData();
   form.append('file', file);
-  form.append('useLlm', String(options.useLlm));
 
   let response: Response;
   try {

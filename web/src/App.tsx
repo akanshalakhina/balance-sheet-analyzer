@@ -22,8 +22,6 @@ export default function App() {
   const [report, setReport] = useState<AnalysisReport | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [stage, setStage] = useState(0);
-  const [useLlm, setUseLlm] = useState(true);
-  const [llmConfigured, setLlmConfigured] = useState(false);
   const [maxUploadBytes, setMaxUploadBytes] = useState(DEFAULT_MAX_UPLOAD);
 
   const lastFile = useRef<File | null>(null);
@@ -31,14 +29,11 @@ export default function App() {
   const timersRef = useRef<number[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Ask the API once whether a key is configured, so the toggle reflects
-  // reality instead of promising something the server cannot do.
+  // Fetch upload limit from the API health endpoint.
   useEffect(() => {
     const controller = new AbortController();
     fetchHealth(controller.signal)
       .then((health) => {
-        setLlmConfigured(health.llmConfigured);
-        setUseLlm(health.llmConfigured);
         if (health.maxUploadBytes) setMaxUploadBytes(health.maxUploadBytes);
       })
       .catch(() => {
@@ -74,7 +69,7 @@ export default function App() {
       );
 
       try {
-        const result = await analyzeFile(file, { useLlm, signal: controller.signal });
+        const result = await analyzeFile(file, { signal: controller.signal });
         setReport(result);
         setStatus('ready');
         // Bring the report into view without yanking the page on mobile.
@@ -93,7 +88,7 @@ export default function App() {
         clearTimers();
       }
     },
-    [useLlm],
+    [],
   );
 
   const reset = () => {
@@ -130,9 +125,6 @@ export default function App() {
           onReset={reset}
           busy={status === 'loading'}
           hasResult={status === 'ready' || status === 'error'}
-          llmConfigured={llmConfigured}
-          useLlm={useLlm}
-          onUseLlmChange={setUseLlm}
           maxUploadBytes={maxUploadBytes}
         />
 

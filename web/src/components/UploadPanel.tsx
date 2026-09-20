@@ -1,6 +1,6 @@
-import { useCallback, useId, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { FileSpreadsheet, FileText, Sparkles, Upload, Wand2, X } from 'lucide-react';
+import { FileSpreadsheet, FileText, Upload, Wand2, X } from 'lucide-react';
 import { formatFileSize } from '../lib/format';
 
 const ACCEPTED = '.pdf,.xlsx,.xls,.xlsm,.csv';
@@ -15,9 +15,6 @@ interface Props {
   onReset: () => void;
   busy: boolean;
   hasResult: boolean;
-  llmConfigured: boolean;
-  useLlm: boolean;
-  onUseLlmChange: (value: boolean) => void;
   maxUploadBytes: number;
 }
 
@@ -26,16 +23,12 @@ export function UploadPanel({
   onReset,
   busy,
   hasResult,
-  llmConfigured,
-  useLlm,
-  onUseLlmChange,
   maxUploadBytes,
 }: Props) {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const toggleId = useId();
 
   /**
    * Validate before uploading so an obvious mistake costs a click rather than
@@ -177,31 +170,7 @@ export function UploadPanel({
       )}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {llmConfigured ? (
-          <label
-            htmlFor={toggleId}
-            className="flex cursor-pointer items-center gap-2.5 text-sm text-ink-700"
-          >
-            <span className="relative inline-flex">
-              <input
-                id={toggleId}
-                type="checkbox"
-                className="peer sr-only"
-                checked={useLlm && llmConfigured}
-                disabled={busy}
-                onChange={(event) => onUseLlmChange(event.target.checked)}
-              />
-              <span className="block h-5 w-9 rounded-full bg-ink-300 transition-colors peer-checked:bg-teal-600 peer-disabled:opacity-50" />
-              <span className="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5" aria-hidden />
-              AI-assisted analysis
-            </span>
-          </label>
-        ) : (
-          <div />
-        )}
+        <div />
 
         <div className="flex gap-2">
           {hasResult && !busy && (

@@ -58,9 +58,7 @@ export type ValueOrigin =
   /** Read straight off the document. */
   | 'extracted'
   /** Summed/derived from other line items (e.g. total current assets). */
-  | 'derived'
-  /** Supplied by the Claude extraction assist when the parser found nothing. */
-  | 'llm';
+  | 'derived';
 
 /** A single figure, with enough provenance to audit it back to the page. */
 export interface ExtractedValue {
@@ -181,8 +179,6 @@ export interface Analysis {
   insights: Insight[];
   /** Short paragraph summarising the position. */
   summary: string;
-  /** True when the summary/insights were written by Claude rather than the rule engine. */
-  narrativeFromLlm: boolean;
 }
 
 /* ------------------------------- report ------------------------------- */
@@ -201,8 +197,6 @@ export interface SourceMeta {
   sheetNames?: string[];
   /** Milliseconds spent in the pipeline. */
   durationMs: number;
-  /** Whether the Claude assist ran, and for what. */
-  llmAssist: { extraction: boolean; narrative: boolean; model?: string };
 }
 
 export interface AnalysisReport {

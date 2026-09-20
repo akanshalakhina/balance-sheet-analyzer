@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import clsx from 'clsx';
-import { Eye, EyeOff, Sigma, Sparkles, TriangleAlert } from 'lucide-react';
+import { Eye, EyeOff, Sigma, TriangleAlert } from 'lucide-react';
 import type { ConceptGroup, ExtractedValue, LineItem, Statement } from '../types';
 import { formatExact, formatMoney } from '../lib/format';
 
@@ -32,11 +32,6 @@ function OriginMark({ value }: { value: ExtractedValue }) {
       />
     );
   }
-  if (value.origin === 'llm') {
-    return (
-      <Sparkles className="h-3 w-3 text-violet-500" aria-label="Caption matched with Claude's help" />
-    );
-  }
   if (value.repaired) {
     return (
       <TriangleAlert
@@ -55,7 +50,7 @@ function cellTitle(value: ExtractedValue, currency: string): string {
   if (value.page) lines.push(`Page ${value.page}`);
   lines.push(
     `Source: ${
-      value.origin === 'derived' ? 'computed' : value.origin === 'llm' ? 'Claude-assisted' : 'read from document'
+      value.origin === 'derived' ? 'computed' : 'read from document'
     } · confidence ${Math.round(value.confidence * 100)}%`,
   );
   if (value.repaired) lines.push('Digits were repaired after OCR damage.');
@@ -192,9 +187,6 @@ export function StatementTable({ statement }: Props) {
         </span>
         <span className="inline-flex items-center gap-1.5">
           <TriangleAlert className="h-3 w-3 text-amber-500" aria-hidden /> digits repaired after OCR damage
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Sparkles className="h-3 w-3 text-violet-500" aria-hidden /> caption matched with Claude&rsquo;s help
         </span>
       </div>
     </section>
