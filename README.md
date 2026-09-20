@@ -16,8 +16,6 @@ A full-stack web application that lets users **upload a company's balance sheet*
 
 ---
 
-## 🖥️ Screenshots
-
 After uploading a balance sheet, the app shows:
 
 - **Company Info** — name, CIN, reporting periods, currency
@@ -51,7 +49,7 @@ After uploading a balance sheet, the app shows:
 │  │         │   │ Classify│   │           │              │
 │  └─────────┘   └─────────┘   └───────────┘              │
 │                                                           │
-│  100% Deterministic & Local Analysis (No External APIs)   │
+│   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -80,9 +78,6 @@ PDF/Excel  ──▶  Raw Text with Positions  ──▶  Structured Numbers
 | **Excel Parse**| xlsx (SheetJS)          | Reads .xlsx, .xls, .xlsm, .csv files        |
 | **Upload**    | multer                   | Handles multipart file uploads (in memory)   |
 | **Validation**| zod                      | Schema validation for data integrity         |
-### Third-Party APIs / External Services
-
-**None.** All processing happens locally on the server. There are no external API calls, third-party subscriptions, or API keys required. No `.env` setup is needed to run the app.
 
 ---
 
@@ -90,7 +85,7 @@ PDF/Excel  ──▶  Raw Text with Positions  ──▶  Structured Numbers
 
 ### Prerequisites
 
-- **Node.js 20.11** or higher ([download](https://nodejs.org/))
+- **Node.js 20.11** or higher
 
 ### Installation & Run
 
@@ -110,7 +105,7 @@ Then open **http://localhost:5173** in your browser.
 
 - Frontend runs on `http://localhost:5173`
 - Backend API runs on `http://localhost:5174`
-- Vite proxies `/api` requests to the backend automatically
+
 
 
 ### Other Commands
