@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Github, ScrollText } from 'lucide-react';
+import { ScrollText } from 'lucide-react';
 import { ApiError, analyzeFile, fetchHealth } from './lib/api';
 import type { AnalysisReport } from './types';
 import { CompositionCharts } from './components/CompositionCharts';
