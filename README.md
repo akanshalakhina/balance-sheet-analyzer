@@ -305,29 +305,3 @@ The app handles invalid inputs gracefully with specific error messages:
 
 ---
 
-## 🌐 Deployment
-
-The app can be deployed to **Vercel** as a static frontend + serverless function:
-
-1. Import the repository at [vercel.com/new](https://vercel.com/new)
-2. Leave all settings at default — `vercel.json` handles the configuration
-3. Optionally add `ANTHROPIC_API_KEY` as an environment variable
-
----
-
-## 📝 Environment Variables
-
-| Variable           | Required | Default          | Description                          |
-|--------------------|----------|------------------|--------------------------------------|
-| `API_PORT`         | No       | `5174`           | Backend API server port              |
-| `MAX_UPLOAD_MB`    | No       | `15`             | Maximum upload file size (MB)        |
-| `ANTHROPIC_API_KEY`| No       | —                | Enables optional Claude AI features  |
-| `ANTHROPIC_MODEL`  | No       | `claude-sonnet-5`| Claude model to use                  |
-
----
-
-## 📌 Known Limitations
-
-- **Two-column statements** (two reporting periods) are the primary tested case
-- **Scanned pages without any text layer** are rejected — the app does not include an OCR engine
-- **Figures from scans can have minor inaccuracies** — the UI shows confidence levels and links every number to its source
