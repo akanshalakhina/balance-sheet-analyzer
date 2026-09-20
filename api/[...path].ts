@@ -5,4 +5,8 @@
  * `/api/health` and `/api/analyze` here rather than only `/api`. The handler
  * itself is the ordinary Express app - see `server/src/vercel.ts`.
  */
-export { default } from '../server/src/vercel.js';
+import app from '../server/src/vercel.js';
+
+export default function handler(req: any, res: any) {
+  return app(req, res);
+}

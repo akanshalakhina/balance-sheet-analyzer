@@ -2,7 +2,17 @@
   "name": "balance-sheet-analyzer",
   "version": "1.0.0",
   "private": true,
-  "description": "Upload a balance sheet (PDF/Excel), extract the line items, compute ratios and generate insights.",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "pdfjs-dist": "^4.10.38",
+    "xlsx": "^0.18.5",
+    "zod": "^3.24.1"
+  },
   "workspaces": [
     "server",
     "web"
