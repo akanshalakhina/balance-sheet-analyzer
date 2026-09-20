@@ -176,30 +176,31 @@ export function UploadPanel({
       )}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label
-          htmlFor={toggleId}
-          className={clsx(
-            'flex items-center gap-2.5 text-sm',
-            llmConfigured ? 'cursor-pointer text-ink-700' : 'cursor-not-allowed text-ink-400',
-          )}
-        >
-          <span className="relative inline-flex">
-            <input
-              id={toggleId}
-              type="checkbox"
-              className="peer sr-only"
-              checked={useLlm && llmConfigured}
-              disabled={!llmConfigured || busy}
-              onChange={(event) => onUseLlmChange(event.target.checked)}
-            />
-            <span className="block h-5 w-9 rounded-full bg-ink-300 transition-colors peer-checked:bg-teal-600 peer-disabled:opacity-50" />
-            <span className="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
-            Claude-assisted analysis
-          </span>
-        </label>
+        {llmConfigured ? (
+          <label
+            htmlFor={toggleId}
+            className="flex cursor-pointer items-center gap-2.5 text-sm text-ink-700"
+          >
+            <span className="relative inline-flex">
+              <input
+                id={toggleId}
+                type="checkbox"
+                className="peer sr-only"
+                checked={useLlm && llmConfigured}
+                disabled={busy}
+                onChange={(event) => onUseLlmChange(event.target.checked)}
+              />
+              <span className="block h-5 w-9 rounded-full bg-ink-300 transition-colors peer-checked:bg-teal-600 peer-disabled:opacity-50" />
+              <span className="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden />
+              AI-assisted analysis
+            </span>
+          </label>
+        ) : (
+          <div />
+        )}
 
         <div className="flex gap-2">
           {hasResult && !busy && (
@@ -221,13 +222,6 @@ export function UploadPanel({
           </button>
         </div>
       </div>
-
-      {!llmConfigured && (
-        <p className="mt-3 text-xs text-ink-500">
-          No <code className="rounded bg-ink-100 px-1 py-0.5 font-mono text-[11px]">ANTHROPIC_API_KEY</code> is
-          set, so the deterministic parser and rule-based analysis run on their own. Everything below still works.
-        </p>
-      )}
     </div>
   );
 }

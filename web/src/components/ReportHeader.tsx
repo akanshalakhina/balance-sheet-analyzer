@@ -122,13 +122,13 @@ export function ReportHeader({ report }: Props) {
         <span className="inline-flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           {source.llmAssist.narrative || source.llmAssist.extraction
-            ? `Claude assist: ${[
+            ? `AI assist: ${[
                 source.llmAssist.extraction ? 'row mapping' : null,
                 source.llmAssist.narrative ? 'written analysis' : null,
               ]
                 .filter(Boolean)
                 .join(' + ')} (${source.llmAssist.model})`
-            : 'Deterministic pipeline only'}
+            : 'Automated analysis pipeline'}
         </span>
       </div>
 
