@@ -81,9 +81,10 @@ export function UploadPanel({
    */
   const loadSample = async () => {
     try {
-      const response = await fetch(SAMPLE_URL);
+      const response = await fetch(`${SAMPLE_URL}?t=${Date.now()}`, { cache: 'no-cache' });
       if (!response.ok) throw new Error(String(response.status));
       const blob = await response.blob();
+      if (blob.size === 0) throw new Error('Empty blob');
       const sample = new File([blob], SAMPLE_NAME, { type: 'application/pdf' });
       setLocalError(null);
       setFile(sample);
